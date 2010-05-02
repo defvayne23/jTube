@@ -7,7 +7,8 @@
 	$.extend({
 		jTube: function(options){
 			var options = $.extend({
-				author: '',
+				user: '',
+				userType: 'uploads',
 				search: '',
 				feed: '',
 				playlist: '',
@@ -22,7 +23,7 @@
 			var imageUrl = ''
 			
 			if(options.author != '')
-				youtubeUrl += 'users/'+options.author+'/uploads?';
+				youtubeUrl += 'users/'+options.user+'/'+options.userType+'?';
 			else if(options.search != '')
 				youtubeUrl += 'api/videos?q='+options.search+'&';
 			else if(options.feed != '')
