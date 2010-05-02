@@ -9,6 +9,7 @@
 			var options = $.extend({
 				author: '',
 				search: '',
+				feed: '',
 				order: 'published',
 				time: 'all_time',
 				limit: 5,
@@ -23,6 +24,8 @@
 				youtubeUrl += 'users/'+options.author+'/uploads?';
 			else if(options.search != '')
 				youtubeUrl += 'api/videos?q='+options.search+'&';
+			else if(options.feed != '')
+				youtubeUrl += 'api/standardfeeds/'+options.feed+'?';
 			
 			youtubeUrl += 'alt=json';
 			youtubeUrl += '&max-results='+options.limit;
