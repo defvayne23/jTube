@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title> jQuery Youtube </title>
+	<meta http-equiv="Content-Type" content="text/html;charset=utf-8" >
+	
+	<style type="text/css">
+	#myVideos,
+	#myVideos2 {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		overflow: hidden;
+	}
+	#myVideos li,
+	#myVideos2 li {
+		float: left;
+		border: 1px solid #B6B6B6;
+		width: 150px;
+		height: 140px;
+		margin: 0 10px 10px 0;
+		padding: 5px;
+	}
+	</style>
+	
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" charset="utf-8"></script>
+	<script type="text/javascript" src="jquery.jTube.js" charset="utf-8"></script>
+
+	<script type="text/javascript">
+	$(function() {
+		$.jTube({
+			author: "twofivethreetwo",
+			limit: 10,
+			page: 1,
+			success: function(videos) {
+				$(videos).each(function() {
+					$('#myVideos').append('<li><a href="'+this.link+'"><img src="'+this.thumbnails[0].url+'"><br>'+this.title+'</a></li>');
+				});
+			}
+		});
+		$.jTube({
+			search: "splinter cell",
+			limit: 10,
+			page: 1,
+			success: function(videos) {
+				$(videos).each(function() {
+					$('#myVideos2').append('<li><a href="'+this.link+'"><img src="'+this.thumbnails[0].url+'"><br>'+this.title+'</a></li>');
+				});
+			}
+		});
+	});
+	</script>
+</head>
+<body>
+	<h2>Videos by 'twofivethreetwo':</h2>
+	<ul id="myVideos"></ul>
+	<h2>Search videos for 'splinter cell':</h2>
+	<ul id="myVideos2"></ul>
+</body>
+</html>
