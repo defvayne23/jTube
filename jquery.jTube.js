@@ -10,6 +10,7 @@
 				author: '',
 				search: '',
 				feed: '',
+				playlist: '',
 				order: 'published',
 				time: 'all_time',
 				limit: 5,
@@ -26,6 +27,8 @@
 				youtubeUrl += 'api/videos?q='+options.search+'&';
 			else if(options.feed != '')
 				youtubeUrl += 'api/standardfeeds/'+options.feed+'?';
+			else if (options.playlist != '')
+				youtubeUrl += 'api/playlists/'+options.playlist+'?';
 			
 			youtubeUrl += 'alt=json';
 			youtubeUrl += '&max-results='+options.limit;
@@ -54,7 +57,6 @@
 						var video = {
 							title: this.title.$t,
 							description: this.media$group.media$description.$t,
-							published: this.published.$t,
 							link: this.link[0].href,
 							categories: categories,
 							author: {
@@ -64,6 +66,9 @@
 							videos: this.media$group.media$content,
 							thumbnails: this.media$group.media$thumbnail
 						};
+						
+						if(this.published)
+							video.published = this.published.$t;
 						
 						if(this.yt$statistics)
 							video.views = this.yt$statistics.viewCount;
