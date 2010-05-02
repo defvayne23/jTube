@@ -10,6 +10,7 @@
 				author: '',
 				search: '',
 				order: 'published',
+				time: 'all_time',
 				limit: 5,
 				page: 1,
 				success: function(videos){}
@@ -27,6 +28,7 @@
 			youtubeUrl += '&max-results='+options.limit;
 			youtubeUrl += '&start-index='+(((options.page * options.limit) - options.limit) + 1);
 			youtubeUrl += '&orderby='+options.order;
+			youtubeUrl += '&time='+options.time;
 			
 			$.ajax({
 				url: youtubeUrl,
