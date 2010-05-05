@@ -82,6 +82,55 @@
 			});
 			
 			return this;
+		},
+		jTubeEmbed: function(video, options) {
+			var options = $.extend({
+				// Embed Options
+				width: 290,
+				height: 250,
+				
+				// Player Options
+				autoplay: true,
+				fullscreeen: false,
+				related: true,
+				loop: false,
+				keyboard: true,
+				genie: false,
+				border: false,
+				highdef: true,
+				start: 0
+			}, options);
+			
+			var videoUrl = video+"?";
+			videoUrl += 'autoplay='+(options.autoPlay?1:0);
+			videoUrl += '&fs='+(options.fullscreen?1:0);
+			videoUrl += '&rl=1'+(options.related?1:0);
+			videoUrl += '&loop=1'+(options.loop?1:0);
+			videoUrl += '&disablekb=0'+(options.keyboard?0:1);
+			videoUrl += '&egm=1'+(options.genie?1:0);
+			videoUrl += '&border=1'+(options.border?1:0);
+			videoUrl += '&hd=1'+(options.highdef?1:0);
+			videoUrl += '&start='+options.start;
+			
+			var videoEmbed = '<object width="'+options.width+'" height="'+options.height+'">';
+			videoEmbed += '<param name="movie" value="'+videoUrl+'"</param>';
+			videoEmbed += '<param name="allowScriptAccess" value="always"></param>';
+			
+			if(options.fullscreen == true)
+				videoEmbed += '<param name="allowFullScreen" value="true"></param>';
+			
+			videoEmbed += '<embed src="'+videoUrl+'"';
+			videoEmbed += '    type="application/x-shockwave-flash"';
+			
+			if(options.fullscreen == true)
+				videoEmbed += '    allowfullscreen="true"';
+			
+			videoEmbed += '    allowscriptaccess="always"';
+			videoEmbed += '    width="'+options.width+'" height="'+options.height+'">';
+			videoEmbed += '    </embed>';
+			videoEmbed += '</object>';
+			
+			return videoEmbed;
 		}
 	});
 })(jQuery);
