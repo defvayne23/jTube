@@ -68,8 +68,28 @@
 							thumbnails: this.media$group.media$thumbnail
 						};
 						
-						if(this.published)
-							video.published = this.published.$t;
+						if(this.published) {
+							published =  this.published.$t.match(/([0-9]{4})-([0-9]{2})-([0-9]{2})T([0-9]{2}):([0-9]{2}):([0-9]{2})/);
+							
+							meridiem = "pm";
+							hour = published[4];
+							if(hour < 12) {
+								meridiem = "am";
+							} else {
+								if(hour > 12)
+									hour = hour - 12;
+							}
+							
+							video.published = {
+								year: published[1],
+								month: published[2],
+								day: published[3],
+								hour: hour,
+								minute: published[5],
+								seconds: published[6],
+								meridiem: meridiem
+							}
+						}
 						
 						if(this.yt$statistics)
 							video.views = this.yt$statistics.viewCount;
