@@ -111,7 +111,7 @@
 						
 						if(this.yt$statistics)
 							video.views = this.yt$statistics.viewCount;
-						console.log(video);
+						
 						videos[videos.length] = video;
 					});
 					
