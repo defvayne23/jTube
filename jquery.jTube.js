@@ -22,7 +22,7 @@
 			var videoElem = this;
 			var imageUrl = ''
 			
-			if(options.author != '')
+			if(options.user != '')
 				youtubeUrl += 'users/'+options.user+'/'+options.userType+'?';
 			else if(options.search != '')
 				youtubeUrl += 'api/videos?q='+options.search+'&';
