@@ -32,7 +32,7 @@
 			page: 1,
 			success: function(videos) {
 				$(videos).each(function() {
-					$('#myVideos').append('<li><a href="'+this.link+'"><img src="'+this.thumbnails[0].url+'"><br>'+this.title+'</a></li>');
+					$('#myVideos').append('<li><a href="'+this.link+'"><img src="'+this.thumbnails[0].url+'"><br>'+this.title+'</a> - '+this.length+'</li>');
 				});
 			}
 		});
@@ -42,7 +42,7 @@
 			page: 1,
 			success: function(videos) {
 				$(videos).each(function() {
-					$('#myVideos2').append('<li><a href="'+this.link+'"><img src="'+this.thumbnails[0].url+'"><br>'+this.title+'</a></li>');
+					$('#myVideos2').append('<li><a href="'+this.link+'"><img src="'+this.thumbnails[0].url+'"><br>'+this.title+'</a> - '+this.length+'</li>');
 				});
 			}
 		});
@@ -52,7 +52,7 @@
 			page: 1,
 			success: function(videos) {
 				$(videos).each(function() {
-					$('#myVideos3').append('<li><a href="'+this.link+'"><img src="'+this.thumbnails[0].url+'"><br>'+this.title+'</a></li>');
+					$('#myVideos3').append('<li><a href="'+this.link+'"><img src="'+this.thumbnails[0].url+'"><br>'+this.title+'</a> - '+this.length+'</li>');
 				});
 			}
 		});
@@ -63,7 +63,7 @@
 			success: function(videos) {
 				$(videos).each(function() {
 					html = '<li>';
-					html += '<a href="'+this.link+'">'+this.title+'</a>';
+					html += '<a href="'+this.link+'">'+this.title+'</a> - '+this.length+'';
 					html += $.jTubeEmbed(this.videos[0].url, {width: 140, height: 130});
 					html += '</li>';
 					$('#myVideos4').append(html);

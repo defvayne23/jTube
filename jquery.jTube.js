@@ -91,9 +91,27 @@
 							}
 						}
 						
+						if(video.videos[0].duration) {
+							duration = video.videos[0].duration;
+							minutes = 0;
+							seconds = 0;
+							
+							while(duration >= 60) {
+								minutes = minutes + 1;
+								duration = duration - 60;
+							}
+							
+							seconds = duration;
+							
+							if(seconds < 10)
+								seconds = '0'+seconds;
+							
+							video.length = minutes+':'+seconds;
+						}
+						
 						if(this.yt$statistics)
 							video.views = this.yt$statistics.viewCount;
-						
+						console.log(video);
 						videos[videos.length] = video;
 					});
 					
