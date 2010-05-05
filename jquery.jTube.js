@@ -93,20 +93,35 @@
 						
 						if(video.videos[0].duration) {
 							duration = video.videos[0].duration;
+							hours = 0;
 							minutes = 0;
 							seconds = 0;
 							
+							// Hours
+							while(duration >= 3600) {
+								hours = hours + 1;
+								duration = duration - 3600;
+							}
+							
+							// Minutes
 							while(duration >= 60) {
 								minutes = minutes + 1;
 								duration = duration - 60;
 							}
 							
+							// Seconds is remainder
 							seconds = duration;
 							
+							// Add leading 0
 							if(seconds < 10)
 								seconds = '0'+seconds;
 							
+							// Put minutes and seconds together
 							video.length = minutes+':'+seconds;
+							
+							// If video is an hour or more, add to video length
+							if(hours > 0)
+								video.length = hours+':'+video.length;
 						}
 						
 						if(this.yt$statistics)

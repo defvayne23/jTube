@@ -19,6 +19,10 @@
 		margin: 0 10px 10px 0;
 		padding: 5px;
 	}
+	ul.videos.large li {
+		width: 240px;
+		height: 260px;
+	}
 	</style>
 	
 	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" charset="utf-8"></script>
@@ -64,7 +68,7 @@
 				$(videos).each(function() {
 					html = '<li>';
 					html += '<a href="'+this.link+'">'+this.title+'</a> - '+this.length+'';
-					html += $.jTubeEmbed(this.videos[0].url, {width: 140, height: 130});
+					html += $.jTubeEmbed(this.videos[0].url, {width: 240, height: 200});
 					html += '</li>';
 					$('#myVideos4').append(html);
 				});
@@ -81,6 +85,6 @@
 	<h2>Video feed for 'top rated':</h2>
 	<ul id="myVideos3" class="videos"></ul>
 	<h2>Video feed for my playlist 'Music' (D92C6F7092127B48):</h2>
-	<ul id="myVideos4" class="videos"></ul>
+	<ul id="myVideos4" class="videos large"></ul>
 </body>
 </html>
