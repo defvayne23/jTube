@@ -1,7 +1,7 @@
 /**
 * jQuery Youtube API Feed Plugin
 * @author John Hoover <john@defvayne23.com>
-*
+* @version 1.3.0
 */
 (function($) {
 	$.extend({
@@ -22,7 +22,7 @@
 			}, options);
 			var youtubeUrl = 'http://gdata.youtube.com/feeds/';
 			var videoElem = this;
-			var imageUrl = ''
+			var imageUrl = '';
 			
 			if(options.user != '')
 				youtubeUrl += 'users/'+options.user+'/'+options.userType+'?';
