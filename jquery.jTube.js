@@ -96,8 +96,8 @@
 							}
 						}
 						
-						if(video.videos[0].duration) {
-							duration = video.videos[0].duration;
+						if(this.media$group.yt$duration) {
+							duration = this.media$group.yt$duration;
 							hours = 0;
 							minutes = 0;
 							seconds = 0;
