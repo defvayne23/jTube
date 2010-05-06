@@ -38,6 +38,9 @@
 				$(videos).each(function() {
 					$('#myVideos').append('<li><a href="'+this.link+'"><img src="'+this.thumbnails[0].url+'"><br>'+this.title+'</a> - '+this.length+'</li>');
 				});
+			},
+			error: function(error) {
+				alert(error);
 			}
 		});
 		$.jTube({
@@ -48,6 +51,9 @@
 				$(videos).each(function() {
 					$('#myVideos2').append('<li><a href="'+this.link+'"><img src="'+this.thumbnails[0].url+'"><br>'+this.title+'</a> - '+this.length+'</li>');
 				});
+			},
+			error: function(error) {
+				alert(error);
 			}
 		});
 		$.jTube({
@@ -58,6 +64,9 @@
 				$(videos).each(function() {
 					$('#myVideos3').append('<li><a href="'+this.link+'"><img src="'+this.thumbnails[0].url+'"><br>'+this.title+'</a> - '+this.length+'</li>');
 				});
+			},
+			error: function(error) {
+				alert(error);
 			}
 		});
 		$.jTube({
@@ -72,6 +81,9 @@
 					html += '</li>';
 					$('#myVideos4').append(html);
 				});
+			},
+			error: function(error) {
+				alert(error);
 			}
 		});
 	});

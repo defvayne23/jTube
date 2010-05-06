@@ -16,7 +16,8 @@
 				time: 'all_time',
 				limit: 5,
 				page: 1,
-				success: function(videos){}
+				success: function(videos){},
+				error: function(message){}
 			}, options);
 			var youtubeUrl = 'http://gdata.youtube.com/feeds/';
 			var videoElem = this;
@@ -30,6 +31,10 @@
 				youtubeUrl += 'api/standardfeeds/'+options.feed+'?';
 			else if (options.playlist != '')
 				youtubeUrl += 'api/playlists/'+options.playlist+'?';
+			else {
+				options.error("No feed choices given.");
+				return false;
+			}
 			
 			youtubeUrl += 'alt=json';
 			youtubeUrl += '&max-results='+options.limit;
