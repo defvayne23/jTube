@@ -48,94 +48,98 @@
 				success: function(data) {
 					var videos = [];
 					
-					$(data.feed.entry).each(function(){
-						videoId = $(this.id.$t.split('/'));
-						videoId = videoId[videoId.length - 1];
-						
-						//Create a clean category array
-						var categories = [];
-						$(this.category).each(function(index){
-							if(index != 0) {
-								categories[index - 1] = this.term
+					if(data != null) {
+						$(data.feed.entry).each(function(){
+							videoId = $(this.id.$t.split('/'));
+							videoId = videoId[videoId.length - 1];
+							
+							//Create a clean category array
+							var categories = [];
+							$(this.category).each(function(index){
+								if(index != 0) {
+									categories[index - 1] = this.term
+								}
+							});
+							
+							var video = {
+								title: this.title.$t,
+								description: this.media$group.media$description.$t,
+								link: this.link[0].href,
+								categories: categories,
+								author: {
+									name: this.author[0].name.$t,
+									link: this.author[0].uri.$t
+								},
+								videos: this.media$group.media$content,
+								thumbnails: this.media$group.media$thumbnail
+							};
+							
+							if(this.published) {
+								published =  this.published.$t.match(/([0-9]{4})-([0-9]{2})-([0-9]{2})T([0-9]{2}):([0-9]{2}):([0-9]{2})/);
+								
+								meridiem = "pm";
+								hour = published[4];
+								if(hour < 12) {
+									meridiem = "am";
+								} else {
+									if(hour > 12)
+										hour = hour - 12;
+								}
+								
+								video.published = {
+									year: published[1],
+									month: published[2],
+									day: published[3],
+									hour: hour,
+									minute: published[5],
+									seconds: published[6],
+									meridiem: meridiem
+								}
 							}
+							
+							if(this.media$group.yt$duration) {
+								duration = this.media$group.yt$duration;
+								hours = 0;
+								minutes = 0;
+								seconds = 0;
+								
+								// Hours
+								while(duration >= 3600) {
+									hours = hours + 1;
+									duration = duration - 3600;
+								}
+								
+								// Minutes
+								while(duration >= 60) {
+									minutes = minutes + 1;
+									duration = duration - 60;
+								}
+								
+								// Seconds is remainder
+								seconds = duration;
+								
+								// Add leading 0
+								if(seconds < 10)
+									seconds = '0'+seconds;
+								
+								// Put minutes and seconds together
+								video.length = minutes+':'+seconds;
+								
+								// If video is an hour or more, add to video length
+								if(hours > 0)
+									video.length = hours+':'+video.length;
+							}
+							
+							if(this.yt$statistics)
+								video.views = this.yt$statistics.viewCount;
+							
+							videos[videos.length] = video;
 						});
 						
-						var video = {
-							title: this.title.$t,
-							description: this.media$group.media$description.$t,
-							link: this.link[0].href,
-							categories: categories,
-							author: {
-								name: this.author[0].name.$t,
-								link: this.author[0].uri.$t
-							},
-							videos: this.media$group.media$content,
-							thumbnails: this.media$group.media$thumbnail
-						};
-						
-						if(this.published) {
-							published =  this.published.$t.match(/([0-9]{4})-([0-9]{2})-([0-9]{2})T([0-9]{2}):([0-9]{2}):([0-9]{2})/);
-							
-							meridiem = "pm";
-							hour = published[4];
-							if(hour < 12) {
-								meridiem = "am";
-							} else {
-								if(hour > 12)
-									hour = hour - 12;
-							}
-							
-							video.published = {
-								year: published[1],
-								month: published[2],
-								day: published[3],
-								hour: hour,
-								minute: published[5],
-								seconds: published[6],
-								meridiem: meridiem
-							}
-						}
-						
-						if(this.media$group.yt$duration) {
-							duration = this.media$group.yt$duration;
-							hours = 0;
-							minutes = 0;
-							seconds = 0;
-							
-							// Hours
-							while(duration >= 3600) {
-								hours = hours + 1;
-								duration = duration - 3600;
-							}
-							
-							// Minutes
-							while(duration >= 60) {
-								minutes = minutes + 1;
-								duration = duration - 60;
-							}
-							
-							// Seconds is remainder
-							seconds = duration;
-							
-							// Add leading 0
-							if(seconds < 10)
-								seconds = '0'+seconds;
-							
-							// Put minutes and seconds together
-							video.length = minutes+':'+seconds;
-							
-							// If video is an hour or more, add to video length
-							if(hours > 0)
-								video.length = hours+':'+video.length;
-						}
-						
-						if(this.yt$statistics)
-							video.views = this.yt$statistics.viewCount;
-						
-						videos[videos.length] = video;
-					});
-					
-					options.success(videos);
+						options.success(videos);
+					} else {
+						options.error("Bad request.");
+					}
 				}
 			});
 			
