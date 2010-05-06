@@ -16,7 +16,7 @@
 				time: 'all_time',
 				limit: 5,
 				page: 1,
-				success: function(videos){},
+				success: function(videos, pages){},
 				error: function(message){}
 			}, options);
 			var youtubeUrl = 'http://gdata.youtube.com/feeds/';
@@ -136,7 +136,9 @@
 							videos[videos.length] = video;
 						});
 						
-						options.success(videos);
+						pages = Math.ceil(data.feed.openSearch$totalResults.$t / options.limit);
+						
+						options.success(videos, pages);
 					} else {
 						options.error("Bad request.");
 					}
