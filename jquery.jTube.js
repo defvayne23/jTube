@@ -12,6 +12,7 @@
 				search: '',
 				feed: '',
 				playlist: '',
+				format: 'flash',
 				order: 'published',
 				time: 'all_time',
 				limit: 5,
@@ -42,6 +43,13 @@
 			youtubeUrl += '&orderby='+options.order;
 			youtubeUrl += '&time='+options.time;
 			
+			if(options.format == "mpeg")
+				youtubeUrl += '&format=6';
+			else if(options.format == "h263")
+				youtubeUrl += '&format=1';
+			else
+				youtubeUrl += '&format=5';
+			
 			$.ajax({
 				url: youtubeUrl,
 				dataType: 'json',
@@ -70,9 +78,20 @@
 									name: this.author[0].name.$t,
 									link: this.author[0].uri.$t
 								},
-								videos: this.media$group.media$content,
-								thumbnails: this.media$group.media$thumbnail
+								thumbnail: this.media$group.media$thumbnail[3].url
 							};
+							
+							videoFormats = [];
+							$(this.media$group.media$content).each(function(){
+								videoFormats[this.yt$format] = this.url;
+							});
+							
+							if(options.format == "mpeg")
+								video.video = videoFormats[6];
+							else if(options.format == "h263")
+								video.video = videoFormats[1];
+							else
+								video.video = videoFormats[5];
 							
 							if(this.published) {
 								published =  this.published.$t.match(/([0-9]{4})-([0-9]{2})-([0-9]{2})T([0-9]{2}):([0-9]{2}):([0-9]{2})/);

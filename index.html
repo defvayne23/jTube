@@ -19,6 +19,10 @@
 		margin: 0 10px 10px 0;
 		padding: 5px;
 	}
+	.videos li img {
+		width: 120px;
+		height: 90px;
+	}
 	ul.videos.large li {
 		width: 240px;
 		height: 260px;
@@ -36,7 +40,7 @@
 			page: 1,
 			success: function(videos) {
 				$(videos).each(function() {
-					$('#myVideos').append('<li><a href="'+this.link+'"><img src="'+this.thumbnails[0].url+'"><br>'+this.title+'</a> - '+this.length+'</li>');
+					$('#myVideos').append('<li><a href="'+this.link+'"><img src="'+this.thumbnail+'"><br>'+this.title+'</a> - '+this.length+'</li>');
 				});
 			},
 			error: function(error) {
@@ -49,7 +53,7 @@
 			page: 1,
 			success: function(videos) {
 				$(videos).each(function() {
-					$('#myVideos2').append('<li><a href="'+this.link+'"><img src="'+this.thumbnails[0].url+'"><br>'+this.title+'</a> - '+this.length+'</li>');
+					$('#myVideos2').append('<li><a href="'+this.link+'"><img src="'+this.thumbnail+'"><br>'+this.title+'</a> - '+this.length+'</li>');
 				});
 			},
 			error: function(error) {
@@ -62,7 +66,7 @@
 			page: 1,
 			success: function(videos) {
 				$(videos).each(function() {
-					$('#myVideos3').append('<li><a href="'+this.link+'"><img src="'+this.thumbnails[0].url+'"><br>'+this.title+'</a> - '+this.length+'</li>');
+					$('#myVideos3').append('<li><a href="'+this.link+'"><img src="'+this.thumbnail+'"><br>'+this.title+'</a> - '+this.length+'</li>');
 				});
 			},
 			error: function(error) {
@@ -77,7 +81,7 @@
 				$(videos).each(function() {
 					html = '<li>';
 					html += '<a href="'+this.link+'">'+this.title+'</a> - '+this.length+'';
-					html += $.jTubeEmbed(this.videos[0].url, {width: 240, height: 200});
+					html += $.jTubeEmbed(this.video, {width: 240, height: 200});
 					html += '</li>';
 					$('#myVideos4').append(html);
 				});
