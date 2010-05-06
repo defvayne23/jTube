@@ -97,8 +97,8 @@
 								}
 							}
 							
-							if(this.media$group.yt$duration) {
-								duration = this.media$group.yt$duration;
+							if(this.media$group.yt$duration.seconds) {
+								duration = this.media$group.yt$duration.seconds;
 								hours = 0;
 								minutes = 0;
 								seconds = 0;
