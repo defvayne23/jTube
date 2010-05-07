@@ -1,7 +1,7 @@
 /**
 * jQuery Youtube API Feed Plugin
 * @author John Hoover <john@defvayne23.com>
-* @version 1.3.0
+* @version 1.3.1
 */
 (function($) {
 	$.extend({
@@ -54,109 +54,104 @@
 				url: youtubeUrl,
 				dataType: 'json',
 				success: function(data) {
-					var videos = [];
-					
 					if(data != null) {
-						$(data.feed.entry).each(function(){
-							videoId = $(this.id.$t.split('/'));
-							videoId = videoId[videoId.length - 1];
+						if(options.user != '' && options.userType == 'playlists') {
+							var playlists = [];
 							
-							//Create a clean category array
-							var categories = [];
-							$(this.category).each(function(index){
-								if(index != 0) {
-									categories[index - 1] = this.term
-								}
+							$(data.feed.entry).each(function(){
+								var playlist = {
+									title: this.title.$t,
+									description: this.yt$description.$t,
+									id: this.yt$playlistId.$t,
+									link: this.link[1].href,
+									published: jTubePublished(this.published.$t)
+								};
+								
+								playlists[playlists.length] = playlist;
 							});
 							
-							var video = {
-								title: this.title.$t,
-								description: this.media$group.media$description.$t,
-								link: this.link[0].href,
-								categories: categories,
-								author: {
-									name: this.author[0].name.$t,
-									link: this.author[0].uri.$t
-								},
-								thumbnail: this.media$group.media$thumbnail[3].url
-							};
+							var videos = playlists;
+						} else {
+							var videos = [];
 							
-							videoFormats = [];
-							$(this.media$group.media$content).each(function(){
-								videoFormats[this.yt$format] = this.url;
+							$(data.feed.entry).each(function(){
+								//Create a clean category array
+								var categories = [];
+								$(this.category).each(function(index){
+									if(index != 0) {
+										categories[index - 1] = this.term
+									}
+								});
+							
+								var video = {
+									title: this.title.$t,
+									description: this.media$group.media$description.$t,
+									link: this.link[0].href,
+									categories: categories,
+									author: {
+										name: this.author[0].name.$t,
+										link: this.author[0].uri.$t
+									},
+									thumbnail: this.media$group.media$thumbnail[3].url
+								};
+							
+								videoFormats = [];
+								$(this.media$group.media$content).each(function(){
+									videoFormats[this.yt$format] = this.url;
+								});
+							
+								if(options.format == "mpeg")
+									video.video = videoFormats[6];
+								else if(options.format == "h263")
+									video.video = videoFormats[1];
+								else
+									video.video = videoFormats[5];
+							
+								if(this.published)
+									video.published = jTubePublished(this.published.$t);
+							
+								if(this.media$group.yt$duration.seconds) {
+									duration = this.media$group.yt$duration.seconds;
+									hours = 0;
+									minutes = 0;
+									seconds = 0;
+								
+									// Hours
+									while(duration >= 3600) {
+										hours = hours + 1;
+										duration = duration - 3600;
+									}
+								
+									// Minutes
+									while(duration >= 60) {
+										minutes = minutes + 1;
+										duration = duration - 60;
+									}
+								
+									// Seconds is remainder
+									seconds = duration;
+								
+									// Add leading 0
+									if(seconds < 10)
+										seconds = '0'+seconds;
+								
+									// Put minutes and seconds together
+									video.length = minutes+':'+seconds;
+								
+									// If video is an hour or more, add to video length
+									if(hours > 0)
+										video.length = hours+':'+video.length;
+								}
+							
+								if(this.yt$statistics)
+									video.views = this.yt$statistics.viewCount;
+							
+								videos[videos.length] = video;
 							});
-							
-							if(options.format == "mpeg")
-								video.video = videoFormats[6];
-							else if(options.format == "h263")
-								video.video = videoFormats[1];
-							else
-								video.video = videoFormats[5];
-							
-							if(this.published) {
-								published =  this.published.$t.match(/([0-9]{4})-([0-9]{2})-([0-9]{2})T([0-9]{2}):([0-9]{2}):([0-9]{2})/);
-								
-								meridiem = "pm";
-								hour = published[4];
-								if(hour < 12) {
-									meridiem = "am";
-								} else {
-									if(hour > 12)
-										hour = hour - 12;
-								}
-								
-								video.published = {
-									year: published[1],
-									month: published[2],
-									day: published[3],
-									hour: hour,
-									minute: published[5],
-									seconds: published[6],
-									meridiem: meridiem
-								}
-							}
-							
-							if(this.media$group.yt$duration.seconds) {
-								duration = this.media$group.yt$duration.seconds;
-								hours = 0;
-								minutes = 0;
-								seconds = 0;
-								
-								// Hours
-								while(duration >= 3600) {
-									hours = hours + 1;
-									duration = duration - 3600;
-								}
-								
-								// Minutes
-								while(duration >= 60) {
-									minutes = minutes + 1;
-									duration = duration - 60;
-								}
-								
-								// Seconds is remainder
-								seconds = duration;
-								
-								// Add leading 0
-								if(seconds < 10)
-									seconds = '0'+seconds;
-								
-								// Put minutes and seconds together
-								video.length = minutes+':'+seconds;
-								
-								// If video is an hour or more, add to video length
-								if(hours > 0)
-									video.length = hours+':'+video.length;
-							}
-							
-							if(this.yt$statistics)
-								video.views = this.yt$statistics.viewCount;
-							
-							videos[videos.length] = video;
-						});
+						}
 						
 						pages = Math.ceil(data.feed.openSearch$totalResults.$t / options.limit);
-						
+					
 						options.success(videos, pages);
 					} else {
 						options.error("Bad request.");
@@ -214,6 +209,29 @@
 			videoEmbed += '</object>';
 			
 			return videoEmbed;
-		}
+		},
+		
 	});
 })(jQuery);
+function jTubePublished(published) {
+	published = published.match(/([0-9]{4})-([0-9]{2})-([0-9]{2})T([0-9]{2}):([0-9]{2}):([0-9]{2})/);
+	
+	meridiem = "pm";
+	hour = published[4];
+	if(hour < 12) {
+		meridiem = "am";
+	} else {
+		if(hour > 12)
+			hour = hour - 12;
+	}
+
+	return {
+		year: published[1],
+		month: published[2],
+		day: published[3],
+		hour: hour,
+		minute: published[5],
+		seconds: published[6],
+		meridiem: meridiem
+	}
+}
