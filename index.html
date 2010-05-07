@@ -30,7 +30,7 @@
 	</style>
 	
 	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" charset="utf-8"></script>
-	<script type="text/javascript" src="jquery.jTube-1.3.1.min.js" charset="utf-8"></script>
+	<script type="text/javascript" src="jquery.jTube.js" charset="utf-8"></script>
 
 	<script type="text/javascript">
 	$(function() {
@@ -104,6 +104,20 @@
 				alert(error);
 			}
 		});
+		$.jTube({
+			user: "twofivethreetwo",
+			userType: 'subscriptions',
+			limit: 10,
+			page: 1,
+			success: function(videos) {
+				$(videos).each(function() {
+					$('#myVideos6').append('<li class="small"><a href="'+this.link+'"><img src="'+this.thumbnail+'"><br>'+this.title+'</a></li>');
+				});
+			},
+			error: function(error) {
+				alert(error);
+			}
+		});
 	});
 	</script>
 </head>
@@ -118,5 +132,7 @@
 	<ul id="myVideos4" class="videos large"></ul>
 	<h2>Video playlists for `defvayne23`:</h2>
 	<ul id="myVideos5" class="videos"></ul>
+	<h2>Video subscriptions for `twofivethreetwo`:</h2>
+	<ul id="myVideos6" class="videos"></ul>
 </body>
 </html>
