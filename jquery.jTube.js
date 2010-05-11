@@ -1,7 +1,7 @@
 /**
 * jQuery Youtube API Feed Plugin
 * @author John Hoover <john@defvayne23.com>
-* @version 1.3.2
+* @version 1.3.3
 */
 (function($) {
 	$.extend({
@@ -54,7 +54,6 @@
 				url: youtubeUrl,
 				dataType: 'json',
 				success: function(data) {
-					console.log(data);
 					if(data != null) {
 						if(options.user != '' && options.userType == 'playlists') {
 							var playlists = [];
