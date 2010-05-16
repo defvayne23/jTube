@@ -1,7 +1,7 @@
 /**
 * jQuery Youtube API Feed Plugin
 * @author John Hoover <john@defvayne23.com>
-* @version 1.3.3
+* @version 1.3.4
 */
 (function($) {
 	$.extend({
@@ -88,6 +88,20 @@
 							});
 							
 							var videos = subscriptions;
+						} else if(options.user != '' && options.userType == 'contacts') {
+							var contacts = [];
+							
+							$(data.feed.entry).each(function(){
+								var contact = {
+									username: this.yt$username.$t,
+									status: this.yt$status.$t,
+									link: this.link[1].href
+								};
+								
+								contacts[contacts.length] = contact;
+							});
+							
+							var videos = contacts;
 						} else {
 							var videos = [];
 							

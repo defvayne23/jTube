@@ -118,6 +118,22 @@
 				alert(error);
 			}
 		});
+		$.jTube({
+			user: "adultswim",
+			userType: 'contacts',
+			limit: 10,
+			page: 1,
+			success: function(contacts) {
+				$(contacts).each(function() {
+					if(this.status == 'accepted') {
+						$('#myVideos7').append('<li class="small"><a href="'+this.link+'">'+this.username+'</a></li>');
+					}
+				});
+			},
+			error: function(error) {
+				alert(error);
+			}
+		});
 	});
 	</script>
 </head>
@@ -134,5 +150,7 @@
 	<ul id="myVideos5" class="videos"></ul>
 	<h2>Video subscriptions for `twofivethreetwo`:</h2>
 	<ul id="myVideos6" class="videos"></ul>
+	<h2>Contacts for `adultswim`:</h2>
+	<ul id="myVideos7" class="videos"></ul>
 </body>
 </html>
