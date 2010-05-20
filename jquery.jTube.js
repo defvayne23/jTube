@@ -1,7 +1,13 @@
-/**
-* jQuery Youtube API Feed Plugin
-* @author John Hoover <john@defvayne23.com>
-* @version 1.3.4
+/*
+ * jTube
+ * http://jtube.monkeecreate.com
+ * 
+ * jQuery Youtube API Feed Plugin
+ * 
+ * Developed by John Hoover <john@defvayne23.com>
+ * Another project from monkeeCreate <http://monkeecreate.com>
+ *
+ * Version 1.3.4 - Last updated: May 16, 2010
 */
 (function($) {
 	$.extend({
@@ -64,7 +70,7 @@
 									description: this.yt$description.$t,
 									id: this.yt$playlistId.$t,
 									link: this.link[1].href,
-									published: jTubePublished(this.published.$t)
+									published: new Date(this.published.$t)
 								};
 								
 								playlists[playlists.length] = playlist;
@@ -80,8 +86,8 @@
 									username: this.yt$username.$t,
 									link: this.link[1].href,
 									thumbnail: this.media$thumbnail.url,
-									published: jTubePublished(this.published.$t),
-									updated: jTubePublished(this.updated.$t)
+									published: new Date(this.published.$t),
+									updated: new Date(this.updated.$t)
 								};
 								
 								subscriptions[subscriptions.length] = subscription;
@@ -139,7 +145,7 @@
 									video.video = videoFormats[5];
 							
 								if(this.published)
-									video.published = jTubePublished(this.published.$t);
+									video.published = new Date(this.published.$t);
 							
 								if(this.media$group.yt$duration.seconds) {
 									duration = this.media$group.yt$duration.seconds;
@@ -244,25 +250,3 @@
 		
 	});
 })(jQuery);
-function jTubePublished(published) {
-	published = published.match(/([0-9]{4})-([0-9]{2})-([0-9]{2})T([0-9]{2}):([0-9]{2}):([0-9]{2})/);
-	
-	meridiem = "pm";
-	hour = published[4];
-	if(hour < 12) {
-		meridiem = "am";
-	} else {
-		if(hour > 12)
-			hour = hour - 12;
-	}
-
-	return {
-		year: published[1],
-		month: published[2],
-		day: published[3],
-		hour: hour,
-		minute: published[5],
-		seconds: published[6],
-		meridiem: meridiem
-	}
-}
