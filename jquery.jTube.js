@@ -7,7 +7,7 @@
  * Developed by John Hoover <john@defvayne23.com>
  * Another project from monkeeCreate <http://monkeecreate.com>
  *
- * Version 1.3.4 - Last updated: May 16, 2010
+ * Version 1.3.5 - Last updated: May 23, 2010
 */
 (function($) {
 	$.extend({
@@ -60,7 +60,7 @@
 				url: youtubeUrl,
 				dataType: 'json',
 				success: function(data) {
-					if(data != null) {
+					if(data != '' && data != null) {
 						if(options.user != '' && options.userType == 'playlists') {
 							var playlists = [];
 							
@@ -122,32 +122,44 @@
 							
 								var video = {
 									title: this.title.$t,
-									description: this.media$group.media$description.$t,
 									link: this.link[0].href,
 									categories: categories,
 									author: {
 										name: this.author[0].name.$t,
 										link: this.author[0].uri.$t
-									},
-									thumbnail: this.media$group.media$thumbnail[3].url
+									}
 								};
-							
+								
+								// Description
+								if(this.media$group.media$description) {
+									video.description = this.media$group.media$description.$t;
+								}
+									
+								// Video Thumbnail
+								if(this.media$group.media$thumbnail) {
+									video.thumbnail = this.media$group.media$thumbnail[3].url;
+								}
+								
+								// Create array of available formats
 								videoFormats = [];
 								$(this.media$group.media$content).each(function(){
 									videoFormats[this.yt$format] = this.url;
 								});
-							
+								
+								// Get video url based on requested video type
 								if(options.format == "mpeg")
 									video.video = videoFormats[6];
 								else if(options.format == "h263")
 									video.video = videoFormats[1];
 								else
 									video.video = videoFormats[5];
-							
+								
+								// Video published date/time
 								if(this.published)
 									video.published = new Date(this.published.$t);
-							
-								if(this.media$group.yt$duration.seconds) {
+								
+								// Video formated duration
+								if(this.media$group.yt$duration) {
 									duration = this.media$group.yt$duration.seconds;
 									hours = 0;
 									minutes = 0;
@@ -179,10 +191,12 @@
 									if(hours > 0)
 										video.length = hours+':'+video.length;
 								}
-							
+								
+								// View count
 								if(this.yt$statistics)
 									video.views = this.yt$statistics.viewCount;
-							
+								
+								// Add video to array to pass back
 								videos[videos.length] = video;
 							});
 						}
