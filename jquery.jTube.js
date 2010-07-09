@@ -7,7 +7,7 @@
  * Developed by John Hoover <john@defvayne23.com>
  * Another project from monkeeCreate <http://monkeecreate.com>
  *
- * Version 1.3.6 - Last updated: May 25, 2010
+ * Version 1.4.0 - Last updated: July 9, 2010
 */
 (function($) {
 	$.extend({
@@ -30,9 +30,12 @@
 			var videoElem = this;
 			var imageUrl = '';
 			
-			if(options.user != '')
-				youtubeUrl += 'api/users/'+options.user+'/'+options.userType+'?';
-			else if(options.search != '')
+			if(options.user != '') {
+				if(options.userType == "profile")
+					youtubeUrl += 'api/users/'+options.user+'?';
+				else
+					youtubeUrl += 'api/users/'+options.user+'/'+options.userType+'?';
+			} else if(options.search != '')
 				youtubeUrl += 'api/videos?q='+options.search+'&';
 			else if(options.feed != '')
 				youtubeUrl += 'api/standardfeeds/'+options.feed+'?';
@@ -44,17 +47,22 @@
 			}
 			
 			youtubeUrl += 'alt=json-in-script';
-			youtubeUrl += '&max-results='+options.limit;
-			youtubeUrl += '&start-index='+(((options.page * options.limit) - options.limit) + 1);
-			youtubeUrl += '&orderby='+options.order;
-			youtubeUrl += '&time='+options.time;
 			
-			if(options.format == "mpeg")
-				youtubeUrl += '&format=6';
-			else if(options.format == "h263")
-				youtubeUrl += '&format=1';
-			else
-				youtubeUrl += '&format=5';
+			if(options.user != '' && options.userType == "profile") {
+			
+			} else {
+				youtubeUrl += '&max-results='+options.limit;
+				youtubeUrl += '&start-index='+(((options.page * options.limit) - options.limit) + 1);
+				youtubeUrl += '&orderby='+options.order;
+				youtubeUrl += '&time='+options.time;
+			
+				if(options.format == "mpeg")
+					youtubeUrl += '&format=6';
+				else if(options.format == "h263")
+					youtubeUrl += '&format=1';
+				else
+					youtubeUrl += '&format=5';
+			}
 			
 			youtubeUrl +='&callback=?';
 			
@@ -109,6 +117,22 @@
 							});
 							
 							var videos = contacts;
+						} else if(options.user != '' && options.userType == 'profile') {
+							var profile = {
+								username: data.entry.yt$username.$t,
+								thumbnail: data.entry.media$thumbnail.url,
+								views: data.entry.yt$statistics.viewCount,
+								uploadViews: data.entry.yt$statistics.videoWatchCount,
+								subscribers: data.entry.yt$statistics.subscriberCount,
+								lastLogin: new Date(data.entry.yt$statistics.lastWebAccess),
+								location: data.entry.yt$location.$t,
+								gender: data.entry.yt$gender.$t,
+								age: data.entry.yt$age.$t,
+								link: data.entry.link[1].href,
+								title: data.entry.title.$t
+							};
+							
+							var videos = profile;
 						} else {
 							var videos = [];
 							
@@ -202,7 +226,10 @@
 							});
 						}
 						
-						pages = Math.ceil(data.feed.openSearch$totalResults.$t / options.limit);
+						if(data.feed)
+							pages = Math.ceil(data.feed.openSearch$totalResults.$t / options.limit);
+						else
+							pages = 0;
 					
 						options.success(videos, pages);
 					} else {

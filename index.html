@@ -134,6 +134,27 @@
 				$('#myVideos7').html(error);
 			}
 		});
+		$.jTube({
+			user: "defvayne23",
+			userType: "profile",
+			success: function(profile) {
+				html = "<img src=\""+profile.thumbnail+"\">\n";
+				html += "<h3>"+profile.username+"</h3>\n";
+				html += "Age: "+profile.age+"<br>\n";
+				html += "Location: "+profile.location+"<br>\n";
+				html += "Gender: "+profile.gender+"<br>\n";
+				html += "<br>\n";
+				html += "Channel Views: "+profile.views+"<br>\n";
+				html += "Total Upload Views: "+profile.uploadViews+"<br>\n";
+				html += "Subscribers: "+profile.subscribers+"<br>\n";
+				html += "<br>\n";
+				html += "Last Login: "+profile.lastLogin+"\n";
+				$('#myProfile').html(html);
+			},
+			error: function(error) {
+				$('#myProfile').html(error);
+			}
+		});
 	});
 	</script>
 </head>
@@ -152,5 +173,7 @@
 	<ul id="myVideos6" class="videos"></ul>
 	<h2>Contacts for `adultswim`:</h2>
 	<ul id="myVideos7" class="videos"></ul>
+	<h2>Profile of `defvayne23`:</h2>
+	<ul id="myProfile" class="videos"></ul>
 </body>
 </html>
