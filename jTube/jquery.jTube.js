@@ -7,17 +7,15 @@
  * Developed by John Hoover <john@defvayne23.com>
  * Another project from monkeeCreate <http://monkeecreate.com>
  *
- * Version 1.4.0 - Last updated: July 9, 2010
+ * Version 2.0.0 - Last updated: August 11, 2010
 */
 (function($) {
 	$.extend({
 		jTube: function(options){
 			var options = $.extend({
-				user: '',
-				userType: 'uploads',
-				search: '',
-				feed: '',
-				playlist: '',
+				request: '',
+				requestValue: '',
+				requestOption: '',
 				format: 'flash',
 				order: 'published',
 				time: 'all_time',
@@ -26,42 +24,60 @@
 				success: function(videos, pages){},
 				error: function(message){}
 			}, options);
-			var youtubeUrl = 'http://gdata.youtube.com/feeds/';
+			var youtubeUrl = 'http://gdata.youtube.com/feeds/api/';
 			var videoElem = this;
 			var imageUrl = '';
 			
-			if(options.user != '') {
-				if(options.userType == "profile")
-					youtubeUrl += 'api/users/'+options.user+'?';
-				else
-					youtubeUrl += 'api/users/'+options.user+'/'+options.userType+'?';
-			} else if(options.search != '')
-				youtubeUrl += 'api/videos?q='+options.search+'&';
-			else if(options.feed != '')
-				youtubeUrl += 'api/standardfeeds/'+options.feed+'?';
-			else if (options.playlist != '')
-				youtubeUrl += 'api/playlists/'+options.playlist+'?';
-			else {
-				options.error("No feed choices given.");
+			if(options.request == 'user') {
+				if(options.requestOption == "profile") {
+					youtubeUrl += 'users/'+options.requestValue+'?';
+				} else {
+					if(options.requestOption == '') {
+						options.error("Request option for 'users' was not passed.");
+					} else {
+						youtubeUrl += 'users/'+options.requestValue+'/'+options.requestOption+'?';
+					}
+				}
+			} else if(options.request == 'search') {
+				youtubeUrl += 'videos?q='+options.requestValue+'&';
+			} else if(options.request == 'feed') {
+				youtubeUrl += 'standardfeeds/'+options.requestValue+'?';
+			} else if(options.request == 'playlist') {
+				youtubeUrl += 'playlists/'+options.requestValue+'?';
+			} else if(options.request == 'videos') {
+				if(options.videoType == "info") {
+					youtubeUrl += 'videos/'+options.requestValue+'?';
+				} else {
+					if(options.requestOption == '') {
+						options.error("Request option for 'videos' was not passed.");
+					} else {
+						youtubeUrl += 'videos/'+options.requestValue+'/'+options.requestOption+'?';
+					}
+				}
+			} else {
+				options.error('No feed choices given.');
 				return false;
 			}
 			
-			youtubeUrl += 'alt=json-in-script';
+			youtubeUrl += 'alt=json-in-script&v=2';
 			
-			if(options.user != '' && options.userType == "profile") {
-			
+			if((options.request == 'user' && options.requestOption == "profile")
+				|| (options.request == 'videos' && options.requestOption == "info")
+			) {
+				// Skip setting options
 			} else {
 				youtubeUrl += '&max-results='+options.limit;
 				youtubeUrl += '&start-index='+(((options.page * options.limit) - options.limit) + 1);
 				youtubeUrl += '&orderby='+options.order;
 				youtubeUrl += '&time='+options.time;
 			
-				if(options.format == "mpeg")
+				if(options.format == "mpeg") {
 					youtubeUrl += '&format=6';
-				else if(options.format == "h263")
+				} else if(options.format == "h263") {
 					youtubeUrl += '&format=1';
-				else
+				} else {
 					youtubeUrl += '&format=5';
+				}
 			}
 			
 			youtubeUrl +='&callback=?';
@@ -70,31 +86,38 @@
 				youtubeUrl,
 				function(data) {
 					if(data != '' && data != null) {
-						if(options.user != '' && options.userType == 'playlists') {
+						if(options.request == 'user' && options.requestOption == 'playlists') {
 							var playlists = [];
 							
 							$(data.feed.entry).each(function(){
 								var playlist = {
 									title: this.title.$t,
-									description: this.yt$description.$t,
+									summary: this.summary.$t,
 									id: this.yt$playlistId.$t,
 									link: this.link[1].href,
-									published: new Date(this.published.$t)
+									published: new Date(this.published.$t),
+									hits: this.yt$countHint.$t
 								};
-								
+				
 								playlists[playlists.length] = playlist;
 							});
 							
-							var videos = playlists;
-						} else if(options.user != '' && options.userType == 'subscriptions') {
+							var return_data = playlists;
+							
+							if(data.feed) {
+								var pages = Math.ceil(data.feed.openSearch$totalResults.$t / options.limit);
+							} else {
+								var pages = 0;
+							}
+						} else if(options.request == 'user' && options.requestOption == 'subscriptions') {
 							var subscriptions = [];
 							
 							$(data.feed.entry).each(function(){
+								
 								var subscription = {
 									title: this.title.$t,
 									username: this.yt$username.$t,
 									link: this.link[1].href,
-									thumbnail: this.media$thumbnail.url,
 									published: new Date(this.published.$t),
 									updated: new Date(this.updated.$t)
 								};
@@ -102,8 +125,14 @@
 								subscriptions[subscriptions.length] = subscription;
 							});
 							
-							var videos = subscriptions;
-						} else if(options.user != '' && options.userType == 'contacts') {
+							var return_data = subscriptions;
+							
+							if(data.feed) {
+								var pages = Math.ceil(data.feed.openSearch$totalResults.$t / options.limit);
+							} else {
+								var pages = 0;
+							}
+						} else if(options.request == 'user' && options.requestOption == 'contacts') {
 							var contacts = [];
 							
 							$(data.feed.entry).each(function(){
@@ -116,122 +145,155 @@
 								contacts[contacts.length] = contact;
 							});
 							
-							var videos = contacts;
-						} else if(options.user != '' && options.userType == 'profile') {
-							var profile = {
+							var return_data = contacts;
+							
+							if(data.feed) {
+								var pages = Math.ceil(data.feed.openSearch$totalResults.$t / options.limit);
+							} else {
+								var pages = 0;
+							}
+						} else if(options.request == 'user' && options.requestOption == 'profile') {
+							console.log(data.entry);
+							var return_data = {
 								username: data.entry.yt$username.$t,
 								thumbnail: data.entry.media$thumbnail.url,
 								views: data.entry.yt$statistics.viewCount,
 								uploadViews: data.entry.yt$statistics.videoWatchCount,
 								subscribers: data.entry.yt$statistics.subscriberCount,
-								lastLogin: new Date(data.entry.yt$statistics.lastWebAccess),
+								lastLogin: new Date.parse(data.entry.yt$statistics.lastWebAccess),
 								location: data.entry.yt$location.$t,
-								gender: data.entry.yt$gender.$t,
 								age: data.entry.yt$age.$t,
 								link: data.entry.link[1].href,
 								title: data.entry.title.$t
 							};
 							
-							var videos = profile;
+							console.log(return_data.lastLogin);
+							
+							if(data.entry.yt$gender) {
+								return_data.gender = data.entry.yt$gender.$t;
+							}
+							
+							var pages = 0;
 						} else {
 							var videos = [];
 							
 							$(data.feed.entry).each(function(){
-								//Create a clean category array
-								var categories = [];
-								$(this.category).each(function(index){
-									if(index != 0) {
-										categories[index - 1] = this.term
-									}
-								});
-							
 								var video = {
-									title: this.title.$t,
+									id: this.media$group.yt$videoid.$t,
+									title: this.media$group.media$title.$t,
+									description: this.media$group.media$description.$t,
+									category: this.media$group.media$category[0].label,
+									keywords: this.media$group.media$keywords.$t,
 									link: this.link[0].href,
-									categories: categories,
 									author: {
 										name: this.author[0].name.$t,
 										link: this.author[0].uri.$t
 									}
 								};
 								
-								// Description
-								if(this.media$group.media$description) {
-									video.description = this.media$group.media$description.$t;
+								if(this.media$group.yt$aspectRatio) {
+									video.aspect = this.media$group.yt$aspectRatio.$t;
 								}
-									
+								
+								if(this.yt$statistics) {
+									video.views = this.yt$statistics.viewCount;
+									video.favorites = this.yt$statistics.favoriteCount;
+								}
+								
+								if(this.gd$comments) {
+									video.comments = this.gd$comments.gd$feedLink.countHint;
+								}
+								
+								if(this.gd$rating) {
+									video.rating = this.gd$rating.average;
+									video.raters = this.gd$rating.numRaters;
+								}
+								
+								if(this.yt$rating) {
+									video.likes = this.yt$rating.numLikes;
+									video.dislikes = this.yt$rating.numDisLikes;
+								}
+								
 								// Video Thumbnail
 								if(this.media$group.media$thumbnail) {
 									video.thumbnail = this.media$group.media$thumbnail[3].url;
 								}
-								
+				
 								// Create array of available formats
 								videoFormats = [];
 								$(this.media$group.media$content).each(function(){
 									videoFormats[this.yt$format] = this.url;
 								});
-								
+				
 								// Get video url based on requested video type
-								if(options.format == "mpeg")
+								if(options.format == "mpeg") {
 									video.video = videoFormats[6];
-								else if(options.format == "h263")
+								} else if(options.format == "h263") {
 									video.video = videoFormats[1];
-								else
+								} else {
 									video.video = videoFormats[5];
-								
+								}
+				
 								// Video published date/time
-								if(this.published)
+								if(this.published) {
 									video.published = new Date(this.published.$t);
-								
+								}
+				
 								// Video formated duration
 								if(this.media$group.yt$duration) {
 									duration = this.media$group.yt$duration.seconds;
 									hours = 0;
 									minutes = 0;
 									seconds = 0;
-								
+				
 									// Hours
 									while(duration >= 3600) {
 										hours = hours + 1;
 										duration = duration - 3600;
 									}
-								
+				
 									// Minutes
 									while(duration >= 60) {
 										minutes = minutes + 1;
 										duration = duration - 60;
 									}
-								
+				
 									// Seconds is remainder
 									seconds = duration;
-								
+				
 									// Add leading 0
-									if(seconds < 10)
+									if(seconds < 10) {
 										seconds = '0'+seconds;
-								
+									}
+				
 									// Put minutes and seconds together
 									video.length = minutes+':'+seconds;
-								
+				
 									// If video is an hour or more, add to video length
-									if(hours > 0)
+									if(hours > 0) {
 										video.length = hours+':'+video.length;
+									}
 								}
-								
+				
 								// View count
-								if(this.yt$statistics)
+								if(this.yt$statistics) {
 									video.views = this.yt$statistics.viewCount;
-								
+								}
+				
 								// Add video to array to pass back
 								videos[videos.length] = video;
 							});
+							
+							return_data = videos;
+							
+							if(data.feed) {
+								var pages = Math.ceil(data.feed.openSearch$totalResults.$t / options.limit);
+							} else {
+								var pages = 0;
+							}
 						}
-						
-						if(data.feed)
-							pages = Math.ceil(data.feed.openSearch$totalResults.$t / options.limit);
-						else
-							pages = 0;
 					
-						options.success(videos, pages);
+						options.success(return_data, pages);
 					} else {
 						options.error("Bad request.");
 					}
@@ -273,14 +335,16 @@
 			videoEmbed += '<param name="movie" value="'+videoUrl+'"</param>';
 			videoEmbed += '<param name="allowScriptAccess" value="always"></param>';
 			
-			if(options.fullscreen == true)
+			if(options.fullscreen == true) {
 				videoEmbed += '<param name="allowFullScreen" value="true"></param>';
+			}
 			
 			videoEmbed += '<embed src="'+videoUrl+'"';
 			videoEmbed += '    type="application/x-shockwave-flash"';
 			
-			if(options.fullscreen == true)
+			if(options.fullscreen == true) {
 				videoEmbed += '    allowfullscreen="true"';
+			}
 			
 			videoEmbed += '    allowscriptaccess="always"';
 			videoEmbed += '    width="'+options.width+'" height="'+options.height+'">';

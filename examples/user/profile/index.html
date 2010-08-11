@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title> jQuery Youtube </title>
+	<meta http-equiv="Content-Type" content="text/html;charset=utf-8" >
+	
+	<link rel="stylesheet" href="../../reset.css" type="text/css" media="screen" charset="utf-8">
+	<link rel="stylesheet" href="../../screen.css" type="text/css" media="screen" charset="utf-8">
+	<link rel="stylesheet" href="screen.css" type="text/css" media="screen" charset="utf-8">
+	
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" charset="utf-8"></script>
+	<script type="text/javascript" src="../../../jTube/jquery.jTube.js" charset="utf-8"></script>
+	
+	<script type="text/javascript">
+	$(function() {
+		$.jTube({
+			request: 'user',
+			requestValue: 'adultswim',
+			requestOption: 'profile',
+			limit: 6,
+			page: 1,
+			success: function(profile) {
+				html = "<img src=\""+profile.thumbnail+"\">\n";
+				html += "<h3><a href='"+profile.link+"'>"+profile.username+"</a></h3>\n";
+				html += "Age: "+profile.age+"<br>\n";
+				html += "Location: "+profile.location+"<br>\n";
+				html += "Gender: "+profile.gender+"<br>\n";
+				html += "<br>\n";
+				html += "Channel Views: "+profile.views+"<br>\n";
+				html += "Total Upload Views: "+profile.uploadViews+"<br>\n";
+				html += "Subscribers: "+profile.subscribers+"<br>\n";
+				html += "<br>\n";
+				html += "Last Login: "+profile.lastLogin+"\n";
+				$('#example').append(html);
+			},
+			error: function(error) {
+				$('#example').html(error);
+			}
+		});
+	});
+	</script>
+</head>
+<body>
+	<div id="wrapper">
+		<h1>jTube Preview</h1>
+		<div id="crumbs">
+			<a href="../../">Examples</a> > <a href="../">Users</a> > Playlists
+		</div>
+		<div id="example"></div>
+		<div class="clear">&nbsp;</div>
+	</div>
+</body>
+</html>
