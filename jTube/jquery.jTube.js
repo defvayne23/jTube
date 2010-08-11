@@ -310,7 +310,7 @@
 				
 				// Player Options
 				autoplay: true,
-				fullscreeen: false,
+				fullscreen: false,
 				related: true,
 				loop: false,
 				keyboard: true,
@@ -321,7 +321,7 @@
 			}, options);
 			
 			var videoUrl = video+"?";
-			videoUrl += 'autoplay='+(options.autoPlay?1:0);
+			videoUrl += 'autoplay='+(options.autoplay?1:0);
 			videoUrl += '&fs='+(options.fullscreen?1:0);
 			videoUrl += '&rl=1'+(options.related?1:0);
 			videoUrl += '&loop=1'+(options.loop?1:0);
