@@ -7,7 +7,7 @@
  * Developed by John Hoover <john@defvayne23.com>
  * Another project from monkeeCreate <http://monkeecreate.com>
  *
- * Version 2.0.0 - Last updated: August 11, 2010
+ * Version 2.0.0 - Last updated: September 11, 2010
 */
 (function($) {
 	$.extend({
@@ -214,6 +214,27 @@
 							}
 							
 							var pages = 0;
+						} else if(options.request == 'video' && options.requestOption == 'comments') {
+							var comments = [];
+							
+							$(data.feed.entry).each(function(){
+								var comment = {
+									author: this.author[0].name.$t,
+									comment: this.content.$t,
+									published: parseISO8601(this.published.$t),
+									updated: parseISO8601(this.updated.$t)
+								};
+								
+								comments[comments.length] = comment;
+							});
+							
+							var return_data = comments;
+							
+							if(data.feed) {
+								var pages = Math.ceil(data.feed.openSearch$totalResults.$t / options.limit);
+							} else {
+								var pages = 0;
+							}
 						} else {
 							var videos = [];
 							

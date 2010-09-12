@@ -14,19 +14,17 @@
 	<script type="text/javascript">
 	$(function() {
 		$.jTube({
-			request: 'user',
-			requestValue: 'adultswim',
-			requestOption: 'contacts',
+			request: 'video',
+			requestValue: 'IpnLj1zNrB8',
+			requestOption: 'comments',
 			limit: 6,
 			page: 1,
 			success: function(videos) {
 				$(videos).each(function() {
 					html = '<li>\n';
-					html += '\t<a href="'+this.link+'">'+this.username+'</a>\n';
-					html += '\t<br><span class="label">Status:</span> '+this.status+'\n';
-					html += '\t<br><span class="label">Published:</span> '+(this.published.getMonth() + 1)+'/'+this.published.getDate()+'/'+this.published.getFullYear()+'\n';
-					html += '\t<br><span class="label">Updated:</span> '+(this.updated.getMonth() + 1)+'/'+this.updated.getDate()+'/'+this.updated.getFullYear()+'\n';
-					// html += '\t<br>'+this.summary+'\n';
+					html += '\t<a href="http://youtube.com/user/'+escape(this.author)+'">'+this.author+'</a>\n';
+					html += '<br><span class="label">Published:</span> '+(this.published.getMonth() + 1)+'/'+this.published.getDate()+'/'+this.published.getFullYear()+'\n';
+					html += '<br>'+this.comment+'\n';
 					html += '</li>\n';
 					$('#example').append(html);
 				});
@@ -42,7 +40,7 @@
 	<div id="wrapper">
 		<h1>jTube Preview</h1>
 		<div id="crumbs">
-			<a href="../../">Examples</a> > <a href="../">Users</a> > Contacts
+			<a href="../../">Examples</a> > <a href="../">Video</a> > comments
 		</div>
 		<ul id="example"></ul>
 		<div class="clear">&nbsp;</div>
