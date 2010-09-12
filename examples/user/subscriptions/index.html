@@ -24,6 +24,8 @@
 					html = '<li>\n';
 					html += '\t<a href="'+this.link+'">'+this.title+'</a>\n';
 					html += '<br><span class="label">Username:</span> '+this.username+'\n';
+					html += '<br><span class="label">Published:</span> '+(this.published.getMonth() + 1)+'/'+this.published.getDate()+'/'+this.published.getFullYear()+'\n';
+					html += '<br><span class="label">Updated:</span> '+(this.updated.getMonth() + 1)+'/'+this.updated.getDate()+'/'+this.updated.getFullYear()+'\n';
 					html += '</li>\n';
 					$('#example').append(html);
 				});
@@ -39,7 +41,7 @@
 	<div id="wrapper">
 		<h1>jTube Preview</h1>
 		<div id="crumbs">
-			<a href="../../">Examples</a> > <a href="../">Users</a> > Uploads
+			<a href="../../">Examples</a> > <a href="../">Users</a> > Subscriptions
 		</div>
 		<ul id="example"></ul>
 		<div class="clear">&nbsp;</div>

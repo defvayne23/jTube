@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title> jQuery Youtube </title>
+	<meta http-equiv="Content-Type" content="text/html;charset=utf-8" >
+	
+	<link rel="stylesheet" href="../../reset.css" type="text/css" media="screen" charset="utf-8">
+	<link rel="stylesheet" href="../../screen.css" type="text/css" media="screen" charset="utf-8">
+	<link rel="stylesheet" href="screen.css" type="text/css" media="screen" charset="utf-8">
+	
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" charset="utf-8"></script>
+	<script type="text/javascript" src="../../../jTube/jquery.jTube.js" charset="utf-8"></script>
+	
+	<script type="text/javascript">
+	$(function() {
+		$.jTube({
+			request: 'user',
+			requestValue: 'RhettandLink',
+			requestOption: 'playlists',
+			limit: 4,
+			page: 1,
+			success: function(videos) {
+				$(videos).each(function() {
+					html = '<li>\n';
+					html += '\t<a href="#" id="playlist_'+this.id+'">'+this.title+'</a>\n';
+					html += '\t<br><span class="label">Hits:</span> '+this.hits+'\n';
+					html += '\t<br><span class="label">Published:</span> '+(this.published.getMonth() + 1)+'/'+this.published.getDate()+'/'+this.published.getFullYear()+'\n';
+					html += '\t<br><span class="label">Updated:</span> '+(this.updated.getMonth() + 1)+'/'+this.updated.getDate()+'/'+this.updated.getFullYear()+'\n';
+					html += '\t<br>'+this.summary+'\n';
+					html += '</li>\n';
+					$('#playlists ul').append(html);
+				});
+				
+				$("#playlists a").click(function() {
+					playlistID = $(this).attr("id");
+					playlistID = playlistID.replace("playlist_", "");
+					playlist = $(this).html();
+					$('#currentPlaylist').html(playlist);
+					
+					$.jTube({
+						request: 'playlist',
+						requestValue: playlistID,
+						limit: 4,
+						page: 1,
+						success: function(videos) {
+							$(videos).each(function() {
+								html = '<li>';
+								html += '<a href="'+this.link+'">'+this.title+'</a> - '+this.length+'<br>';
+								html += $.jTubeEmbed(this.video, {width: 400, height: 250});
+								html += '</li>';
+								$('#example').append(html);
+							});
+							
+							$('#playlists').hide('fast');
+							$('#videos').show('slow');
+						},
+						error: function(error) {
+							$('#example').html(error);
+						}
+					});
+				});
+			},
+			error: function(error) {
+				$('#example').append('<li class="error">'+error+'</li>');
+			}
+		});
+		
+		var empty = function(event) {event.preventDefault();};
+		$('#playlists a, #return').live('click', empty);
+		
+		$('#return').click(function() {
+			$('#videos').hide('fast');
+			$('#playlists').show('slow');
+			$('#currentPlaylist').html("");
+			$('#example').html("");
+		});
+	});
+	</script>
+</head>
+<body>
+	<div id="wrapper">
+		<h1>jTube Preview</h1>
+		<div id="crumbs">
+			<a href="../../">Examples</a> > <a href="../">Extra</a> > Navigate Playlists
+		</div>
+		<div id="playlists">
+			<ul></ul>
+		</div>
+		<div id="videos">
+			<div id="viewing">
+				Currently playlist: <span id="currentPlaylist"></span> | <a href="#" id="return">Return to Playlists</a>
+			</div>
+			<ul id="example"></ul>
+		</div>
+		<div class="clear">&nbsp;</div>
+	</div>
+</body>
+</html>

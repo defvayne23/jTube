@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title> jQuery Youtube </title>
+	<meta http-equiv="Content-Type" content="text/html;charset=utf-8" >
+	
+	<link rel="stylesheet" href="../../reset.css" type="text/css" media="screen" charset="utf-8">
+	<link rel="stylesheet" href="../../screen.css" type="text/css" media="screen" charset="utf-8">
+	<link rel="stylesheet" href="screen.css" type="text/css" media="screen" charset="utf-8">
+	
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" charset="utf-8"></script>
+	<script type="text/javascript" src="../../../jTube/jquery.jTube.js" charset="utf-8"></script>
+	
+	<script type="text/javascript">
+	$(function() {
+		var currentPage = 1;
+		var options = {
+			request: 'feed',
+			requestValue: 'top_rated',
+			limit: 6,
+			page: currentPage,
+			success: function(videos, numberPages) {
+				$('#example').html('');
+				$('#currentPage').html(currentPage);
+				$('#numberPages').html(numberPages);
+
+				$(videos).each(function() {
+					videoHTML = '<li><a href="'+this.link+'"><img src="'+this.thumbnail+'"><br>'+this.title+'</a> - '+this.length+'</li>';
+					
+					$('#example').append(videoHTML);
+				});
+				
+				//Back
+				if(currentPage != 1) {
+					$('#pageBack').removeClass('disabled').unbind('click').click(function(event) {
+						currentPage = currentPage - 1;
+						options.page = currentPage;
+						$.jTube(options);
+						event.preventDefault();
+					});
+				} else {
+					$('#pageBack').addClass('disabled').unbind('click').click(empty);
+				}
+				
+				//Next
+				if(currentPage < numberPages) {
+					$('#pageNext').removeClass('disabled').unbind('click').click(function(event) {
+						currentPage = currentPage + 1;
+						options.page = currentPage;
+						$.jTube(options);
+						event.preventDefault();
+					});
+				} else {
+					$('#pageNext').addClass('disabled').unbind('click').click(empty);
+				}
+			},
+			error: function(error) {
+				$('#example').append('<li class="error">'+error+'</li>');
+			}
+		};
+		
+		var empty = function(event) {event.preventDefault();};
+		
+		$("#pageBack, #pageNext").click(empty);
+		$.jTube(options);
+	});
+	</script>
+</head>
+<body>
+	<div id="wrapper">
+		<h1>jTube Preview</h1>
+		<div id="crumbs">
+			<a href="../../">Examples</a> > <a href="../">Extra</a> > Paging
+		</div>
+		<ul id="example"></ul>
+		<div class="clear">&nbsp;</div>
+		<div id="paging">
+			<a href="" id="pageBack" class="disabled">Back</a> - Page <span id="currentPage">1</span> of <span id="numberPages">1</span> - <a href="" id="pageNext" class="disabled">Next</a>
+		</div>
+	</div>
+</body>
+</html>

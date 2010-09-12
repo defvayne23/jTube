@@ -14,25 +14,27 @@
 	<script type="text/javascript">
 	$(function() {
 		$.jTube({
-			request: 'user',
-			requestValue: 'adultswim',
-			requestOption: 'playlists',
-			limit: 6,
+			request: 'feed',
+			requestValue: 'top_rated',
+			limit: 4,
 			page: 1,
 			success: function(videos) {
-				$(videos).each(function() {
-					html = '<li>\n';
-					html += '\t<a href="'+this.link+'">'+this.title+'</a>\n';
-					html += '\t<br><span class="label">Hits:</span> '+this.hits+'\n';
-					html += '\t<br><span class="label">Published:</span> '+(this.published.getMonth() + 1)+'/'+this.published.getDate()+'/'+this.published.getFullYear()+'\n';
-					html += '\t<br><span class="label">Updated:</span> '+(this.updated.getMonth() + 1)+'/'+this.updated.getDate()+'/'+this.updated.getFullYear()+'\n';
-					html += '\t<br>'+this.summary+'\n';
-					html += '</li>\n';
+				$(videos).each(function(i) {
+					embedOptions = {width: 400, height: 250};
+					
+					if(i == 0) {
+						embedOptions.autoplay = 1;
+					}
+					
+					html = '<li>';
+					html += '<a href="'+this.link+'">'+this.title+'</a> - '+this.length+'';
+					html += $.jTubeEmbed(this.video, embedOptions);
+					html += '</li>';
 					$('#example').append(html);
 				});
 			},
 			error: function(error) {
-				$('#example').html(error);
+				$('#example').append('<li class="error">'+error+'</li>');
 			}
 		});
 	});
@@ -42,7 +44,7 @@
 	<div id="wrapper">
 		<h1>jTube Preview</h1>
 		<div id="crumbs">
-			<a href="../../">Examples</a> > <a href="../">Users</a> > Playlists
+			<a href="../../">Examples</a> > <a href="../">Extra</a> > Embed Video
 		</div>
 		<ul id="example"></ul>
 		<div class="clear">&nbsp;</div>

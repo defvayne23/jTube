@@ -12,23 +12,38 @@
 	<script type="text/javascript" src="../../../jTube/jquery.jTube.js" charset="utf-8"></script>
 	
 	<script type="text/javascript">
+	var qsParm = new Array();
+	function qs() {
+		var query = window.location.search.substring(1);
+		var parms = query.split('&');
+		for (var i=0; i<parms.length; i++) {
+			var pos = parms[i].indexOf('=');
+			if (pos > 0) {
+				var key = parms[i].substring(0,pos);
+				var val = parms[i].substring(pos+1);
+				qsParm[key] = val;
+			}
+		}
+	}
+	
 	$(function() {
+		qs();
+		
+		if(qsParm['search'] == '' || qsParm['search'] == null || qsParm['search'] == undefined)
+			qsParm['search'] = 'splinter cell';
+		else
+			qsParm['search'] = unescape(qsParm['search']);
+			
+		$('input[name=search]').val(qsParm['search']);
+		
 		$.jTube({
-			request: 'user',
-			requestValue: 'adultswim',
-			requestOption: 'playlists',
-			limit: 6,
+			request: 'search',
+			requestValue: qsParm['search'],
+			limit: 10,
 			page: 1,
 			success: function(videos) {
 				$(videos).each(function() {
-					html = '<li>\n';
-					html += '\t<a href="'+this.link+'">'+this.title+'</a>\n';
-					html += '\t<br><span class="label">Hits:</span> '+this.hits+'\n';
-					html += '\t<br><span class="label">Published:</span> '+(this.published.getMonth() + 1)+'/'+this.published.getDate()+'/'+this.published.getFullYear()+'\n';
-					html += '\t<br><span class="label">Updated:</span> '+(this.updated.getMonth() + 1)+'/'+this.updated.getDate()+'/'+this.updated.getFullYear()+'\n';
-					html += '\t<br>'+this.summary+'\n';
-					html += '</li>\n';
-					$('#example').append(html);
+					$('#example').append('<li><a href="'+this.link+'"><img src="'+this.thumbnail+'"><br>'+this.title+'</a> - '+this.length+'</li>');
 				});
 			},
 			error: function(error) {
@@ -42,8 +57,11 @@
 	<div id="wrapper">
 		<h1>jTube Preview</h1>
 		<div id="crumbs">
-			<a href="../../">Examples</a> > <a href="../">Users</a> > Playlists
+			<a href="../../">Examples</a> > <a href="../">Other</a> > Search
 		</div>
+		<form name="search" method="get">
+			<input type="text" name="search" value=""> <input type="submit" value="Search">
+		</form>
 		<ul id="example"></ul>
 		<div class="clear">&nbsp;</div>
 	</div>

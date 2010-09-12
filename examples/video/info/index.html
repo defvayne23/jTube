@@ -14,22 +14,18 @@
 	<script type="text/javascript">
 	$(function() {
 		$.jTube({
-			request: 'user',
-			requestValue: 'adultswim',
-			requestOption: 'playlists',
+			request: 'video',
+			requestValue: '7_Iw2nEROBg',
+			requestOption: 'info',
 			limit: 6,
 			page: 1,
-			success: function(videos) {
-				$(videos).each(function() {
-					html = '<li>\n';
-					html += '\t<a href="'+this.link+'">'+this.title+'</a>\n';
-					html += '\t<br><span class="label">Hits:</span> '+this.hits+'\n';
-					html += '\t<br><span class="label">Published:</span> '+(this.published.getMonth() + 1)+'/'+this.published.getDate()+'/'+this.published.getFullYear()+'\n';
-					html += '\t<br><span class="label">Updated:</span> '+(this.updated.getMonth() + 1)+'/'+this.updated.getDate()+'/'+this.updated.getFullYear()+'\n';
-					html += '\t<br>'+this.summary+'\n';
-					html += '</li>\n';
-					$('#example').append(html);
-				});
+			success: function(video) {
+				html = '<li>\n';
+				html += '\t<a href="'+video.link+'"><img src="'+video.thumbnail+'">'+video.title+'</a> - '+video.length+'\n';
+				html += '<br><span class="label">Category:</span> '+video.category+'\n';
+				html += '<br><span class="label">Keywords:</span> '+video.keywords+'\n';
+				html += '</li>\n';
+				$('#example').append(html);
 			},
 			error: function(error) {
 				$('#example').html(error);
@@ -42,7 +38,7 @@
 	<div id="wrapper">
 		<h1>jTube Preview</h1>
 		<div id="crumbs">
-			<a href="../../">Examples</a> > <a href="../">Users</a> > Playlists
+			<a href="../../">Examples</a> > <a href="../">Video</a> > Info
 		</div>
 		<ul id="example"></ul>
 		<div class="clear">&nbsp;</div>

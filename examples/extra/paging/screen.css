@@ -1,0 +1,22 @@
+#example li {
+	float: left;
+	width: 440px;
+	height: 100px;
+	margin: 15px;
+}
+#example li a img {
+	float: left;
+	margin-right: 10px;
+}
+#example li .label {
+	font-weight: bold;
+}
+#paging {
+	text-align: center;
+	border-top: 1px solid #ccc;
+	padding-top: 15px;
+}
+#paging a.disabled {
+	color: #ccc;
+	text-decoration: none;
+}

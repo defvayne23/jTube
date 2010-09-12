@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title> jQuery Youtube </title>
+	<meta http-equiv="Content-Type" content="text/html;charset=utf-8" >
+	
+	<link rel="stylesheet" href="../../reset.css" type="text/css" media="screen" charset="utf-8">
+	<link rel="stylesheet" href="../../screen.css" type="text/css" media="screen" charset="utf-8">
+	<link rel="stylesheet" href="screen.css" type="text/css" media="screen" charset="utf-8">
+	
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" charset="utf-8"></script>
+	<script type="text/javascript" src="../../../jTube/jquery.jTube.js" charset="utf-8"></script>
+	
+	<script type="text/javascript">
+	var qsParm = new Array();
+	function qs() {
+		var query = window.location.search.substring(1);
+		var parms = query.split('&');
+		for (var i=0; i<parms.length; i++) {
+			var pos = parms[i].indexOf('=');
+			if (pos > 0) {
+				var key = parms[i].substring(0,pos);
+				var val = parms[i].substring(pos+1);
+				qsParm[key] = val;
+			}
+		}
+	}
+	
+	$(function() {
+		qs();
+		
+		if(qsParm['feed'] == '' || qsParm['feed'] == null || qsParm['feed'] == undefined)
+			qsParm['feed'] = 'top_rated';
+		else
+			qsParm['feed'] = unescape(qsParm['feed']);
+			
+		$('select[name=feed]').val(qsParm['feed']);
+		
+		$.jTube({
+			request: 'feed',
+			requestValue: qsParm['feed'],
+			limit: 10,
+			page: 1,
+			success: function(videos) {
+				$(videos).each(function() {
+					$('#example').append('<li><a href="'+this.link+'"><img src="'+this.thumbnail+'"><br>'+this.title+'</a> - '+this.length+'</li>');
+				});
+			},
+			error: function(error) {
+				$('#example').html(error);
+			}
+		});
+		$('select[name=feed]').change(function() {
+			$('form[name=feed]').submit();
+		});
+	});
+	</script>
+</head>
+<body>
+	<div id="wrapper">
+		<h1>jTube Preview</h1>
+		<div id="crumbs">
+			<a href="../../">Examples</a> > <a href="../">Other</a> > Feed
+		</div>
+		<form name="feed" method="get">
+			<select name="feed">
+				<option value="top_rated">Top Rated</option>
+				<option value="top_favorites">Top favorites</option>
+				<option value="most_viewed">Most viewed</option>
+				<option value="most_popular">Most popular</option>
+				<option value="most_recent">Most recent</option>
+				<option value="most_discussed">Most discussed</option>
+				<option value="most_responded">Most responded</option>
+				<option value="recently_featured">Recently featured</option>
+				<option value="watch_on_mobile">Videos for mobile phones</option>
+			</select>
+		</form>
+		<ul id="example"></ul>
+		<div class="clear">&nbsp;</div>
+	</div>
+</body>
+</html>

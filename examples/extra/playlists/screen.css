@@ -1,0 +1,25 @@
+#playlists li {
+	float: left;
+	width: 440px;
+	height: 100px;
+	margin: 15px;
+}
+#videos li {
+	float: left;
+	width: 440px;
+	height: 260px;
+	margin: 15px;
+}
+#playlists li a img, #videos li a img {
+	float: left;
+	margin-right: 10px;
+}
+#playlists li .label, #videos li .label {
+	font-weight: bold;
+}
+#videos {
+	display: none;
+}
+#currentPlaylist {
+	font-weight: bold;
+}

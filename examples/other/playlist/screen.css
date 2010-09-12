@@ -1,0 +1,13 @@
+#example li {
+	float: left;
+	width: 440px;
+	height: 200px;
+	margin: 15px;
+}
+#example li a img {
+	float: left;
+	margin-right: 10px;
+}
+#example li .label {
+	font-weight: bold;
+}

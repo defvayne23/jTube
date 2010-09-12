@@ -27,6 +27,32 @@
 			var youtubeUrl = 'http://gdata.youtube.com/feeds/api/';
 			var videoElem = this;
 			var imageUrl = '';
+			var date = new Date();
+			
+			function parseISO8601(string) {
+				var regexp = "([0-9]{4})(-([0-9]{2})(-([0-9]{2})" +
+					"(T([0-9]{2}):([0-9]{2})(:([0-9]{2})(\.([0-9]+))?)?" +
+					"(Z|(([-+])([0-9]{2}):([0-9]{2})))?)?)?)?";
+				var d = string.match(new RegExp(regexp));
+				
+				var offset = 0;
+				var date = new Date(d[1], 0, 1);
+				
+				if (d[3]) { date.setMonth(d[3] - 1); }
+				if (d[5]) { date.setDate(d[5]); }
+				if (d[7]) { date.setHours(d[7]); }
+				if (d[8]) { date.setMinutes(d[8]); }
+				if (d[10]) { date.setSeconds(d[10]); }
+				if (d[12]) { date.setMilliseconds(Number("0." + d[12]) * 1000); }
+				if (d[14]) {
+					offset = (Number(d[16]) * 60) + Number(d[17]);
+					offset *= ((d[15] == '-') ? 1 : -1);
+				}
+				
+				offset -= date.getTimezoneOffset();
+				time = (Number(date) + (offset * 60 * 1000));
+				return new Date(Number(time));
+			}
 			
 			if(options.request == 'user') {
 				if(options.requestOption == "profile") {
@@ -44,8 +70,8 @@
 				youtubeUrl += 'standardfeeds/'+options.requestValue+'?';
 			} else if(options.request == 'playlist') {
 				youtubeUrl += 'playlists/'+options.requestValue+'?';
-			} else if(options.request == 'videos') {
-				if(options.videoType == "info") {
+			} else if(options.request == 'video') {
+				if(options.requestOption == "info") {
 					youtubeUrl += 'videos/'+options.requestValue+'?';
 				} else {
 					if(options.requestOption == '') {
@@ -66,11 +92,20 @@
 			) {
 				// Skip setting options
 			} else {
-				youtubeUrl += '&max-results='+options.limit;
-				youtubeUrl += '&start-index='+(((options.page * options.limit) - options.limit) + 1);
-				youtubeUrl += '&orderby='+options.order;
-				youtubeUrl += '&time='+options.time;
-			
+				if(options.request == 'video' && (options.requestOption == 'info')) {
+					
+				} else {
+					youtubeUrl += '&max-results='+options.limit;
+					youtubeUrl += '&start-index='+(((options.page * options.limit) - options.limit) + 1);
+					youtubeUrl += '&orderby='+options.order;
+				}
+				
+				if(options.request == 'feed' && (options.requestValue == 'most_recent' || options.requestValue == 'recently_featured' || options.requestValue == 'watch_on_mobile')) {
+					// Skip setting time
+				} else {
+					youtubeUrl += '&time='+options.time;
+				}
+				
 				if(options.format == "mpeg") {
 					youtubeUrl += '&format=6';
 				} else if(options.format == "h263") {
@@ -91,12 +126,13 @@
 							
 							$(data.feed.entry).each(function(){
 								var playlist = {
+									id: this.yt$playlistId.$t,
 									title: this.title.$t,
 									summary: this.summary.$t,
-									id: this.yt$playlistId.$t,
 									link: this.link[1].href,
-									published: new Date(this.published.$t),
-									hits: this.yt$countHint.$t
+									hits: this.yt$countHint.$t,
+									published: parseISO8601(this.published.$t),
+									updated: parseISO8601(this.updated.$t)
 								};
 				
 								playlists[playlists.length] = playlist;
@@ -113,13 +149,12 @@
 							var subscriptions = [];
 							
 							$(data.feed.entry).each(function(){
-								
 								var subscription = {
 									title: this.title.$t,
 									username: this.yt$username.$t,
 									link: this.link[1].href,
-									published: new Date(this.published.$t),
-									updated: new Date(this.updated.$t)
+									published: parseISO8601(this.published.$t),
+									updated: parseISO8601(this.updated.$t)
 								};
 								
 								subscriptions[subscriptions.length] = subscription;
@@ -139,7 +174,9 @@
 								var contact = {
 									username: this.yt$username.$t,
 									status: this.yt$status.$t,
-									link: this.link[1].href
+									link: this.link[1].href,
+									published: parseISO8601(this.published.$t),
+									updated: parseISO8601(this.updated.$t)
 								};
 								
 								contacts[contacts.length] = contact;
@@ -153,21 +190,24 @@
 								var pages = 0;
 							}
 						} else if(options.request == 'user' && options.requestOption == 'profile') {
-							console.log(data.entry);
 							var return_data = {
 								username: data.entry.yt$username.$t,
 								thumbnail: data.entry.media$thumbnail.url,
 								views: data.entry.yt$statistics.viewCount,
 								uploadViews: data.entry.yt$statistics.videoWatchCount,
 								subscribers: data.entry.yt$statistics.subscriberCount,
-								lastLogin: new Date.parse(data.entry.yt$statistics.lastWebAccess),
+								lastLogin: parseISO8601(data.entry.yt$statistics.lastWebAccess),
 								location: data.entry.yt$location.$t,
 								age: data.entry.yt$age.$t,
 								link: data.entry.link[1].href,
-								title: data.entry.title.$t
+								title: data.entry.title.$t,
+								published: parseISO8601(data.entry.published.$t),
+								updated: parseISO8601(data.entry.updated.$t)
 							};
 							
-							console.log(return_data.lastLogin);
+							if(data.entry.yt$aboutMe.$t) {
+								return_data.about = data.entry.yt$aboutMe.$t;
+							}
 							
 							if(data.entry.yt$gender) {
 								return_data.gender = data.entry.yt$gender.$t;
@@ -177,7 +217,13 @@
 						} else {
 							var videos = [];
 							
-							$(data.feed.entry).each(function(){
+							if(options.request == 'video' && options.requestOption == 'info') {
+								entry = data.entry;
+							} else {
+								entry = data.feed.entry;
+							}
+							
+							$(entry).each(function(){
 								var video = {
 									id: this.media$group.yt$videoid.$t,
 									title: this.media$group.media$title.$t,
@@ -236,7 +282,12 @@
 				
 								// Video published date/time
 								if(this.published) {
-									video.published = new Date(this.published.$t);
+									video.published = parseISO8601(this.published.$t);
+								}
+				
+								// Video updated date/time
+								if(this.published) {
+									video.updated = parseISO8601(this.updated.$t);
 								}
 				
 								// Video formated duration
@@ -275,24 +326,24 @@
 									}
 								}
 				
-								// View count
-								if(this.yt$statistics) {
-									video.views = this.yt$statistics.viewCount;
-								}
-				
 								// Add video to array to pass back
 								videos[videos.length] = video;
 							});
 							
-							return_data = videos;
-							
-							if(data.feed) {
-								var pages = Math.ceil(data.feed.openSearch$totalResults.$t / options.limit);
-							} else {
+							if(options.request == 'video' && options.requestOption == 'info') {
+								return_data = videos[0];
 								var pages = 0;
+							} else {
+								return_data = videos;
+								
+								if(data.feed.openSearch$totalResults) {
+									var pages = Math.ceil(data.feed.openSearch$totalResults.$t / options.limit);
+								} else {
+									var pages = 0;
+								}
 							}
 						}
-					
+						
 						options.success(return_data, pages);
 					} else {
 						options.error("Bad request.");
@@ -305,11 +356,11 @@
 		jTubeEmbed: function(video, options) {
 			var options = $.extend({
 				// Embed Options
-				width: 290,
-				height: 250,
+				width: 560,
+				height: 340,
 				
 				// Player Options
-				autoplay: true,
+				autoplay: false,
 				fullscreen: false,
 				related: true,
 				loop: false,
@@ -320,7 +371,7 @@
 				start: 0
 			}, options);
 			
-			var videoUrl = video+"?";
+			var videoUrl = video+"&";
 			videoUrl += 'autoplay='+(options.autoplay?1:0);
 			videoUrl += '&fs='+(options.fullscreen?1:0);
 			videoUrl += '&rl=1'+(options.related?1:0);

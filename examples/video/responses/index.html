@@ -16,17 +16,17 @@
 		$.jTube({
 			request: 'user',
 			requestValue: 'adultswim',
-			requestOption: 'playlists',
+			requestOption: 'contacts',
 			limit: 6,
 			page: 1,
 			success: function(videos) {
 				$(videos).each(function() {
 					html = '<li>\n';
-					html += '\t<a href="'+this.link+'">'+this.title+'</a>\n';
-					html += '\t<br><span class="label">Hits:</span> '+this.hits+'\n';
+					html += '\t<a href="'+this.link+'">'+this.username+'</a>\n';
+					html += '\t<br><span class="label">Status:</span> '+this.status+'\n';
 					html += '\t<br><span class="label">Published:</span> '+(this.published.getMonth() + 1)+'/'+this.published.getDate()+'/'+this.published.getFullYear()+'\n';
 					html += '\t<br><span class="label">Updated:</span> '+(this.updated.getMonth() + 1)+'/'+this.updated.getDate()+'/'+this.updated.getFullYear()+'\n';
-					html += '\t<br>'+this.summary+'\n';
+					// html += '\t<br>'+this.summary+'\n';
 					html += '</li>\n';
 					$('#example').append(html);
 				});
@@ -42,7 +42,7 @@
 	<div id="wrapper">
 		<h1>jTube Preview</h1>
 		<div id="crumbs">
-			<a href="../../">Examples</a> > <a href="../">Users</a> > Playlists
+			<a href="../../">Examples</a> > <a href="../">Users</a> > Contacts
 		</div>
 		<ul id="example"></ul>
 		<div class="clear">&nbsp;</div>

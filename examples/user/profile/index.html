@@ -30,7 +30,11 @@
 				html += "Total Upload Views: "+profile.uploadViews+"<br>\n";
 				html += "Subscribers: "+profile.subscribers+"<br>\n";
 				html += "<br>\n";
-				html += "Last Login: "+profile.lastLogin+"\n";
+				html += "Last Login: "+(profile.lastLogin.getMonth() + 1)+'/'+profile.lastLogin.getDate()+'/'+profile.lastLogin.getFullYear()+"<br>\n";
+				html += 'Published: '+(profile.published.getMonth() + 1)+'/'+profile.published.getDate()+'/'+profile.published.getFullYear()+'<br>\n';
+				html += 'Updated: '+(profile.updated.getMonth() + 1)+'/'+profile.updated.getDate()+'/'+profile.updated.getFullYear()+'<br>\n';
+				html += "<br>\n";
+				html += profile.about+"\n";
 				$('#example').append(html);
 			},
 			error: function(error) {
