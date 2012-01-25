@@ -17,7 +17,7 @@
 				requestValue: '',
 				requestOption: '',
 				format: 'flash',
-				order: 'published',
+				order: '',
 				time: 'all_time',
 				limit: 5,
 				page: 1,
@@ -28,6 +28,16 @@
 			var videoElem = this;
 			var imageUrl = '';
 			var date = new Date();
+			
+			if(options.order == '') {
+				if(options.request == 'user' && options.requestOption == 'playlists') {
+					options.order = 'position';
+				} else if(options.request == 'search') {
+					options.order = 'relevance';
+				} else {
+					options.order = 'published';
+				}
+			}
 			
 			function parseISO8601(string) {
 				var regexp = "([0-9]{4})(-([0-9]{2})(-([0-9]{2})" +
