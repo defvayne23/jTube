@@ -1,0 +1,15 @@
+h1. jTube (2.x)
+
+jQuery plugin to interact with the Youtube API.
+
+h2. Requirements/Installing
+
+Latest jQuery.
+
+h2. How-To
+
+"Learn how to use jTube":https://github.com/defvayne23/jTube/wiki
+
+h2. Developers
+
+John Hoover, "http://defvayne23.com":http://defvayne23.com
