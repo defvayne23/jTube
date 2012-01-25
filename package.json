@@ -1,0 +1,29 @@
+{
+    "name": "jTube",
+    "version": "2.1",
+    "title": "jQuery.jTube()",
+    "author": {
+        "name": "John Hoover",
+        "url": "https://defvayne23.com/"
+    },
+    "licenses": [
+        {
+            "type": "MIT",
+            "url": "MIT-LICENSE.txt"
+        }
+    ],
+    "dependencies": {
+        "jquery": ">1.5"
+    },
+    "description": "jQuery plugin to interact with the Youtube API.",
+    "keywords": [
+        "Youtube",
+        "video",
+		"playlist"
+    ],
+    "homepage": "https://jtube.monkeecreate.com/",
+	"demo": "http://jtube.monkeecreate.com",
+    "files": [
+        "jTube/jquery.jTube.js"
+    ]
+}
