@@ -77,7 +77,11 @@
 			} else if(options.request == 'search') {
 				youtubeUrl += 'videos?q='+options.requestValue+'&';
 			} else if(options.request == 'feed') {
-				youtubeUrl += 'standardfeeds/'+options.requestValue+'?';
+				if(options.requestOption == '') {
+					youtubeUrl += 'standardfeeds/'+options.requestValue+'?';
+				} else {
+					youtubeUrl += 'standardfeeds/'+options.requestOption+'/'+options.requestValue+'?';
+				}
 			} else if(options.request == 'playlist') {
 				youtubeUrl += 'playlists/'+options.requestValue+'?';
 			} else if(options.request == 'video') {
